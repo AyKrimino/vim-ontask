@@ -1,6 +1,11 @@
 local M = {}
 
-M.total_seconds = 1324521512
+M.total_seconds = 0
+
+local update_timer = function ()
+	M.total_seconds = M.total_seconds + 1
+	vim.cmd("redrawstatus")
+end
 
 local get_time = function (seconds)
 	local hours = seconds / 3600
@@ -12,7 +17,7 @@ end
 
 M.get_text = function()
 	local hours, minutes, seconds = get_time(M.total_seconds)
-  return string.format("Task: %d:%d:%d", hours, minutes, seconds)
+  return string.format("Task: %02d:%02d:%02d", hours, minutes, seconds)
 end
 
 M.setup = function()
@@ -20,6 +25,10 @@ M.setup = function()
 end
 
 M.start_tracking = function()
+	vim.fn.timer_start(1000, update_timer, {
+		["repeat"] = -1,
+	})
+
   M.setup()
 end
 
